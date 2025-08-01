@@ -1,20 +1,19 @@
 {
     "manifest_version": 3,
     "name": "LinkedIn AdBlocker",
-    "version": "0.0.1",
-    "author": "Sarah Klemmer",
+    "version": "1.0",
     "description": "Blocks LinkedIn ads to enhance user experience.",
-    "browser_action": {
+    "action": {
         "default_title": "LinkedIn AdBlocker"
     },
     "permissions": [
-        "tabs",
-        "webNavigation",
-        "https://www.linkedin.com/"
+        "scripting",
+        "webNavigation"
+    ],
+    "host_permissions": [
+        "https://www.linkedin.com/*"
     ],
     "background": {
-        "scripts": [
-            "background.js"
-        ]
+        "service_worker": "background.js"
     }
 }

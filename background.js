@@ -1,30 +1,13 @@
-chrome.webNavigation.onCommitted.addListener(function (tab) {
-    if (tab.frameId == 0) {
-        chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-            let url = tabs[0].url;
-            let parsedUrl = url.replace("https://", "")
-                .replace("http://", "")
-                .replace("www.", "")
-            let domain = parsedUrl.slice(0, parsedUrl.indexOf('/')== -1 ? parsedUrl.length : parsedUrl.indexOf('/'))
-                .slice(0, parsedUrl.indexOf('?') == -1 ? parsedUrl.length : parsedUrl.indexOf('?'));
+chrome.webNavigation.onCommitted.addListener((details) => {
+  if (details.frameId !== 0) return; // Only main frame
 
-            try {
-                if (domain.length < 1 || domain == null || domain == undefined) {
-                    return;
-                } else if (domain == "linkedin.com") {
-                    runLinkedinScript();
-                    return;
-                }
-            } catch (err) {
-                throw err;
-            }
-        });
-    }
-});
+  const url = new URL(details.url);
+  const domain = url.hostname.replace('www.', '');
 
-function runLinkedinScript() {
-    chrome.tabs.executeScript({
-        file: 'linkedin.js'
+  if (domain === 'linkedin.com') {
+    chrome.scripting.executeScript({
+      target: { tabId: details.tabId },
+      files: ['linkedin.js']
     });
-    return true;
-}
+  }
+});
